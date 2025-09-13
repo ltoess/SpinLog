@@ -11,6 +11,8 @@ def get_connection():
 # fix the rest of these so they use get connection() function bc now they dont work 
 
 def insert_artist(name):
+    conn = get_connection()
+    cursor = conn.cursor()
     try: 
         cursor.execute("INSERT INTO Artist (name) VALUES(?)", (name,))
         conn.commit()
