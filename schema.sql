@@ -8,7 +8,7 @@ CREATE TABLE Album (
     title TEXT NOT NULL, 
     artist_id INTEGER NOT NULL,
     year INTEGER,
-    format TEXT, 
+    record_format TEXT, 
     CONSTRAINT fk_album_artist
         FOREIGN KEY (artist_id)
         REFERENCES Artist(id)
@@ -18,7 +18,8 @@ CREATE TABLE Album (
 
 CREATE TABLE Pressing (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    release_id INTEGER NOT NULL,
+    album_id INTEGER NOT NULL,
+    catalog_number TEXT,
     year INTEGER,
     format TEXT,
     CONSTRAINT fk_pressing_album
