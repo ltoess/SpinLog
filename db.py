@@ -97,3 +97,18 @@ def print_all_artists():
     print(cursor.fetchall())
     conn.close()
     
+    
+def print_all_albums(): 
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT Album.id, Album.title, Artist.name, Album.year, Album.record_format
+        FROM Album
+        JOIN Artist ON Album.artist_id = Artist.id
+        """)
+    print(cursor.fetchall())
+    conn.close()
+    
+
+    
