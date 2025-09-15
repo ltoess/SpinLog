@@ -3,13 +3,13 @@ CREATE TABLE Artist (
     name TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE Release (
+CREATE TABLE Album (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL, 
     artist_id INTEGER NOT NULL,
     year INTEGER,
     format TEXT, 
-    CONSTRAINT fk_release_artist
+    CONSTRAINT fk_album_artist
         FOREIGN KEY (artist_id)
         REFERENCES Artist(id)
         ON DELETE NO ACTION
@@ -21,9 +21,9 @@ CREATE TABLE Pressing (
     release_id INTEGER NOT NULL,
     year INTEGER,
     format TEXT,
-    CONSTRAINT fk_pressing_release
-        FOREIGN KEY (release_id)
-        REFERENCES Release(id)
+    CONSTRAINT fk_pressing_album
+        FOREIGN KEY (album_id)
+        REFERENCES Album(id)
         ON DELETE NO ACTION 
         ON UPDATE NO ACTION
 );
