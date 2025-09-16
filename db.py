@@ -83,7 +83,7 @@ def insert_album(album_name: str, artist_name: str, year, record_format: str):
             conn.commit()
             return cursor.lastrowid
         except sqlite3.IntegrityError: 
-            print(f"Album '{album_name}' couldn't be added")
+            print(f"Album '{album_name}' by '{artist_name}' already exists.")
         finally: 
             conn.close()
     
@@ -107,9 +107,12 @@ def print_all_albums():
         FROM Album
         JOIN Artist ON Album.artist_id = Artist.id
         """)
-    print(cursor.fetchall())
+    rows = cursor.fetchall()
     conn.close()
+    return rows 
     
+    
+# returns an array of album entries from specified artist 
 def list_albums(artist_name: str):
     conn = get_connection()
     cursor = conn.cursor()
@@ -117,11 +120,14 @@ def list_albums(artist_name: str):
         """
         SELECT Album.id, Album.title, Artist.name, Album.year, Album.record_format
         FROM Album
-        WHERE Artist.name = ? COLLATE NOCASE
         JOIN Artist ON Album.artist_id = Artist.id
+        WHERE Artist.name = ? COLLATE NOCASE
         ORDER BY Artist.name, Album.year
         """
-        
+        , (artist_name,)
     )
+    rows = cursor.fetchall()
+    conn.close
+    return rows
 
     
