@@ -110,5 +110,18 @@ def print_all_albums():
     print(cursor.fetchall())
     conn.close()
     
+def list_albums(artist_name: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT Album.id, Album.title, Artist.name, Album.year, Album.record_format
+        FROM Album
+        WHERE Artist.name = ? COLLATE NOCASE
+        JOIN Artist ON Album.artist_id = Artist.id
+        ORDER BY Artist.name, Album.year
+        """
+        
+    )
 
     
