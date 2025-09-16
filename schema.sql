@@ -14,6 +14,7 @@ CREATE TABLE Album (
         REFERENCES Artist(id)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
+    CONSTRAINT uq_album UNIQUE (title, artist_id)
 );
 
 CREATE TABLE Pressing (
