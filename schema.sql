@@ -21,6 +21,8 @@ CREATE TABLE Pressing (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     album_id INTEGER NOT NULL,
     catalog_number TEXT,
+    label TEXT, 
+    rpm INTEGER, 
     year INTEGER,
     format TEXT,
     CONSTRAINT fk_pressing_album
