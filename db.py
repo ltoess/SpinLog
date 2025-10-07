@@ -8,8 +8,7 @@ def get_connection():
     conn.execute("PRAGMA foreign_keys = ON;") # foreign key enforcement
     return conn
 
-def name_to_id(name: str): 
-    conn = get_connection()
+def name_to_artist_id(conn, name: str): 
     cursor = conn.cursor()
  
     cursor.execute(
@@ -28,8 +27,26 @@ def name_to_id(name: str):
         conn.close()
         return None
 
-def insert_artist(name: str):
-    conn = get_connection()
+def name_to_album_id(conn, name: str): 
+    cursor = conn.cursor()
+    
+    cursor.execute(
+        """
+        SELECT id
+        FROM Album
+        WHERE name = ? COLLATE NOCASE        
+        """
+        , (name,)       
+    )
+    result = cursor.fetchone()
+    if result: 
+        conn.close()
+        return result[0]
+    else: 
+        conn.close()
+        return None
+
+def insert_artist(conn, name: str):
     cursor = conn.cursor()
     try: 
         cursor.execute("INSERT INTO Artist (name) VALUES(?)", (name,))
@@ -40,10 +57,9 @@ def insert_artist(name: str):
     finally: 
         conn.close()
         
-def insert_album(album_name: str, artist_name: str, year, record_format: str): 
-    conn = get_connection()
+def insert_album(conn, album_name: str, artist_name: str, year, record_format: str): 
     cursor = conn.cursor()
-    artist_id = name_to_id(artist_name)
+    artist_id = name_to_artist_id(artist_name)
     year_input = year
     
     if artist_id == None: 
@@ -86,9 +102,12 @@ def insert_album(album_name: str, artist_name: str, year, record_format: str):
             print(f"Album '{album_name}' by '{artist_name}' already exists.")
         finally: 
             conn.close()
+            
+def insert_pressing(conn, album_name: str, catalog_number: str, rpm: int, year: int, ): 
+    cursor = conn.cursor()
+    # album_id = name_to_album_id(album_name)
     
-def print_all_artists():
-    conn = get_connection()
+def print_all_artists(conn):
     cursor = conn.cursor()
     cursor.execute("""
                SELECT *
@@ -98,8 +117,7 @@ def print_all_artists():
     conn.close()
     
     
-def print_all_albums(): 
-    conn = get_connection()
+def print_all_albums(conn): 
     cursor = conn.cursor()
     cursor.execute(
         """
@@ -113,8 +131,7 @@ def print_all_albums():
     
     
 # returns an array of album entries from specified artist 
-def list_albums(artist_name: str):
-    conn = get_connection()
+def list_albums(conn, artist_name: str):
     cursor = conn.cursor()
     cursor.execute(
         """
