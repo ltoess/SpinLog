@@ -96,9 +96,16 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
             print(f"Album '{album_name}' by '{artist_name}' already exists.")
 
             
-def insert_pressing(conn, album_name: str, catalog_number: str, rpm: int, year: int, ): 
+def insert_pressing(conn, album_name: str, catalog_number: str, label: str, rpm: int, year: int, ): 
     cursor = conn.cursor()
-    # album_id = name_to_album_id(album_name)
+    album_id = name_to_album_id(album_name)
+    
+    try: 
+        cursor.execute(
+            "INSERT INTO Pressing (album_id, catalog_number, label, rpm, year, format) VALUES(?, ?, ?, ?, ?, ?)", 
+            (album_id, 
+            
+        )
     
 def print_all_artists(conn):
     cursor = conn.cursor()
