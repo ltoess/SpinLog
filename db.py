@@ -21,10 +21,8 @@ def name_to_artist_id(conn, name: str):
     )
     result = cursor.fetchone()
     if result:
-        conn.close()
         return result[0]
     else: 
-        conn.close()
         return None
 
 def name_to_album_id(conn, name: str): 
@@ -40,10 +38,8 @@ def name_to_album_id(conn, name: str):
     )
     result = cursor.fetchone()
     if result: 
-        conn.close()
         return result[0]
     else: 
-        conn.close()
         return None
 
 def insert_artist(conn, name: str):
@@ -54,17 +50,15 @@ def insert_artist(conn, name: str):
         return cursor.lastrowid
     except sqlite3.IntegrityError:
         print(f"Artist '{name}' already exists")
-    finally: 
-        conn.close()
+
         
 def insert_album(conn, album_name: str, artist_name: str, year, record_format: str): 
     cursor = conn.cursor()
-    artist_id = name_to_artist_id(artist_name)
+    artist_id = name_to_artist_id(conn, artist_name)
     year_input = year
     
     if artist_id == None: 
         print("No artist: ", artist_name, ". Add the artist first.")
-        conn.close()
         return
     else:     
         # input validation  
@@ -100,8 +94,7 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
             return cursor.lastrowid
         except sqlite3.IntegrityError: 
             print(f"Album '{album_name}' by '{artist_name}' already exists.")
-        finally: 
-            conn.close()
+
             
 def insert_pressing(conn, album_name: str, catalog_number: str, rpm: int, year: int, ): 
     cursor = conn.cursor()
@@ -114,7 +107,6 @@ def print_all_artists(conn):
                FROM Artist               
                """)
     print(cursor.fetchall())
-    conn.close()
     
     
 def print_all_albums(conn): 
@@ -126,7 +118,6 @@ def print_all_albums(conn):
         JOIN Artist ON Album.artist_id = Artist.id
         """)
     rows = cursor.fetchall()
-    conn.close()
     return rows 
     
     
@@ -144,7 +135,6 @@ def list_albums(conn, artist_name: str):
         , (artist_name,)
     )
     rows = cursor.fetchall()
-    conn.close
     return rows
 
     
