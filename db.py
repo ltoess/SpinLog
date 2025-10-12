@@ -61,8 +61,9 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
         print("No artist: ", artist_name, ". Add the artist first.")
         return
     else:     
-        # input validation  
-        # check year  
+    # input validation  
+    
+    # check year  
         if year in (None, ""): 
             year_input = None
         else: 
@@ -75,7 +76,7 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
                 print("invalid year format")
                 return None
                 
-        # check format
+    # check format
         if record_format in (None, ""): 
             format_input = None
         else: 
@@ -84,7 +85,7 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
             if format_input not in valid_formats: 
                 print('Format must be one of: LP, EP, 7" (or leave blank)')
                 return
-        
+    # insert    
         try: 
             cursor.execute(
                 "INSERT INTO Album (title, artist_id, year, record_format) VALUES(?, ?, ?, ?)", 
@@ -96,16 +97,69 @@ def insert_album(conn, album_name: str, artist_name: str, year, record_format: s
             print(f"Album '{album_name}' by '{artist_name}' already exists.")
 
             
-def insert_pressing(conn, album_name: str, catalog_number: str, label: str, rpm: int, year: int, ): 
+def insert_pressing(conn, album_name: str, catalog_number: str, label: str, rpm, year, record_format: str): 
     cursor = conn.cursor()
-    album_id = name_to_album_id(album_name)
+    album_id = name_to_album_id(conn, album_name)
+    year_input = year
     
-    try: 
-        cursor.execute(
-            "INSERT INTO Pressing (album_id, catalog_number, label, rpm, year, format) VALUES(?, ?, ?, ?, ?, ?)", 
-            (album_id, 
+    if album_id == None: 
+        print("No album: '{album_name}'. Add the album first.")
+        return
+    else: 
+    # input validation  
+         
+    # check catalog number
+        if catalog_number in (None, ""): 
+            catalog_input = None
+        else: 
+            catalog_input = catalog_number
+        
+        if label in (None, ""): 
+            label_input = None
+        else: 
+            label_input = label
+        
+    # check year  
+        if year in (None, ""): 
+            year_input = None
+        else: 
+            try:
+                year_input = int(year)
+                if not(1000 <= year <= datetime.datetime.now().year + 1):
+                    print("year out of range")
+                    year_input = None
+            except ValueError: 
+                print("invalid year format")
+                return None
             
-        )
+    # check format
+        if record_format in (None, ""): 
+            format_input = None
+        else: 
+            format_input = record_format.strip().upper()
+            valid_formats = {"LP", "EP", "7\""}
+            if format_input not in valid_formats: 
+                print('Format must be one of: LP, EP, 7" (or leave blank)')
+                return
+            
+    # check rpm 
+        if rpm in (None, ""): 
+            rpm_input = None 
+        else: 
+            rpm_input = rpm
+            if rpm_input not in ("33 1/3", "45", "78"): 
+                print("invalid format") 
+                rpm_input = None
+    # insert
+        try: 
+            cursor.execute(
+                "INSERT INTO Pressing (album_id, catalog_number, label, rpm, year, format) VALUES(?, ?, ?, ?, ?, ?)", 
+                (album_id, catalog_input, label_input, rpm_input, year_input, format_input) 
+            )
+            conn.commit()
+            return cursor.lastrowid
+        except sqlite3.IntegrityError: 
+            print(f"Pressing '{album_name}' with catalog number '{catalog_number}' already exists")
     
 def print_all_artists(conn):
     cursor = conn.cursor()
